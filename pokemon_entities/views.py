@@ -80,15 +80,22 @@ def show_pokemon(request, pokemon_id):
     else:
         previous_evolution = None
 
+    try:
+        next_pokemon = pokemons.next_evolutions.get(id=pokemons.id + 1)
+        next_evolution = {"title_ru": next_pokemon.title,
+                          "pokemon_id": next_pokemon.id,
+                          "img_url": next_pokemon.image.url}
+    except Pokemon.DoesNotExist:
+        next_evolution = None
+
     pokemon = {
         "title_ru": pokemons,
         "title_en": pokemons.title_en,
         "title_jp": pokemons.title_jp,
         "description": pokemons.description,
         "img_url": pokemons.image.url,
-        "previous_evolution": previous_evolution
-        "next_evolution":
-
+        "previous_evolution": previous_evolution,
+        "next_evolution": next_evolution
     }
 
     return render(request, 'pokemon.html', context={
