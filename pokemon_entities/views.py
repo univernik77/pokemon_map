@@ -1,7 +1,5 @@
 import folium
-import json
 
-from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.utils.timezone import localtime
 
@@ -48,7 +46,7 @@ def show_all_pokemons(request):
     for pokemon in pokemons:
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': request.build_absolute_uri(pokemon.image.url),
+            'img_url': pokemon.image.url,
             'title_ru': pokemon,
         })
 
@@ -61,11 +59,10 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     pokemons = Pokemon.objects.get(id=pokemon_id)
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-
     pokemon_entities = PokemonEntity.objects.filter(
-    pokemon=pokemons,
-    appeared_at__lt=localtime(),
-    disappeared_at__gt=localtime()
+        pokemon=pokemons,
+        appeared_at__lt=localtime(),
+        disappeared_at__gt=localtime()
     )
     for pokemon_entity in pokemon_entities:
         add_pokemon(
@@ -73,21 +70,25 @@ def show_pokemon(request, pokemon_id):
             pokemon_entity.long,
             request.build_absolute_uri(pokemons.image.url)
         )
+
     if pokemons.parent:
-        previous_evolution = {"title_ru": pokemons.parent,
-                              "pokemon_id": pokemons.parent.id,
-                              "img_url": pokemons.parent.image.url}
+        previous_pokemon = pokemons.parent
+        previous_evolution = {
+            "title_ru": previous_pokemon,
+            "pokemon_id": previous_pokemon.id,
+            "img_url": previous_pokemon.image.url
+        }
     else:
         previous_evolution = None
-
-    try:
-        next_pokemon = pokemons.next_evolutions.get(id=pokemons.id + 1)
-        next_evolution = {"title_ru": next_pokemon.title,
-                          "pokemon_id": next_pokemon.id,
-                          "img_url": next_pokemon.image.url}
-    except Pokemon.DoesNotExist:
+    if pokemons.next_evolutions.first():
+        next_pokemon = pokemons.next_evolutions.first()
+        next_evolution = {
+            "title_ru": next_pokemon.title,
+            "pokemon_id": next_pokemon.id,
+            "img_url": next_pokemon.image.url
+        }
+    else:
         next_evolution = None
-
     pokemon = {
         "title_ru": pokemons,
         "title_en": pokemons.title_en,

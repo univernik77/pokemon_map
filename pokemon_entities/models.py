@@ -1,13 +1,24 @@
 from django.db import models
 
 
-
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='media', null=True, blank=True)
-    title_en = models.CharField(max_length=200, null=True, blank=True)
-    title_jp = models.CharField(max_length=200, null=True, blank=True)
-    description = models.TextField(max_length=1000, null=True, blank=True)
+    title = models.CharField('Название', max_length=200)
+    image = models.ImageField('Изображение',
+                              upload_to='media',
+                              null=True,
+                              blank=True)
+    title_en = models.CharField('Название на английском',
+                                max_length=200,
+                                null=True,
+                                blank=True)
+    title_jp = models.CharField('Название на японском',
+                                max_length=200,
+                                null=True,
+                                blank=True)
+    description = models.TextField('Описание',
+                                   max_length=1000,
+                                   null=True,
+                                   blank=True)
     parent = models.ForeignKey("self",
                                verbose_name='Из кого эволюционирует',
                                related_name='next_evolutions',
@@ -18,14 +29,29 @@ class Pokemon(models.Model):
     def __str__(self):
         return f'{self.title}'
 
+
 class PokemonEntity(models.Model):
-    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE)
-    lat = models.FloatField('Lat', null=True)
-    long = models.FloatField('Long', null=True)
-    appeared_at = models.DateTimeField('Appeared at', null=True)
-    disappeared_at = models.DateTimeField('Disappeared at', null=True)
-    level = models.IntegerField('Level', null=True, blank=True)
-    health = models.IntegerField('Health', null=True, blank=True)
-    strength = models.IntegerField('Strength', null=True, blank=True)
-    defence = models.IntegerField('Defence', null=True, blank=True)
-    stamina = models.IntegerField('Stamina', null=True, blank=True)
+    pokemon = models.ForeignKey(Pokemon,
+                                verbose_name='Покемон',
+                                on_delete=models.CASCADE)
+    lat = models.FloatField('Широта', null=True)
+    long = models.FloatField('Долгота', null=True)
+    appeared_at = models.DateTimeField('Время появления',
+                                       null=True)
+    disappeared_at = models.DateTimeField('Время исчезновения',
+                                          null=True)
+    level = models.IntegerField('Уровень',
+                                null=True,
+                                blank=True)
+    health = models.IntegerField('Здоровье',
+                                 null=True,
+                                 blank=True)
+    strength = models.IntegerField('Сила',
+                                   null=True,
+                                   blank=True)
+    defence = models.IntegerField('Защита',
+                                  null=True,
+                                  blank=True)
+    stamina = models.IntegerField('Выносливость',
+                                  null=True,
+                                  blank=True)
