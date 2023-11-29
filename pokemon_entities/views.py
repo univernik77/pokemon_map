@@ -89,6 +89,7 @@ def show_pokemon(request, pokemon_id):
         }
     else:
         next_evolution = None
+
     pokemon = {
         "title_ru": pokemons,
         "title_en": pokemons.title_en,
