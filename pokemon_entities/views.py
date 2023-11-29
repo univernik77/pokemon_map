@@ -71,8 +71,8 @@ def show_pokemon(request, pokemon_id):
             request.build_absolute_uri(pokemons.image.url)
         )
 
-    if pokemons.parent:
-        previous_pokemon = pokemons.parent
+    if pokemons.previous_evolutions:
+        previous_pokemon = pokemons.previous_evolutions
         previous_evolution = {
             "title_ru": previous_pokemon,
             "pokemon_id": previous_pokemon.id,

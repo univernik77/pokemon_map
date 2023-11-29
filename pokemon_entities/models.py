@@ -15,12 +15,12 @@ class Pokemon(models.Model):
     description = models.TextField('Описание',
                                    max_length=1000,
                                    blank=True)
-    parent = models.ForeignKey("self",
-                               verbose_name='Из кого эволюционирует',
-                               related_name='next_evolutions',
-                               on_delete=models.SET_NULL,
-                               null=True,
-                               blank=True)
+    previous_evolutions = models.ForeignKey("self",
+                                            verbose_name='Из кого эволюционирует',
+                                            related_name='next_evolutions',
+                                            on_delete=models.SET_NULL,
+                                            null=True,
+                                            blank=True)
 
     def __str__(self):
         return f'{self.title}'
