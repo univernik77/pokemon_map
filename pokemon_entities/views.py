@@ -28,11 +28,11 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 def show_all_pokemons(request):
     pokemons = Pokemon.objects.all()
-    timenow = localtime()
+    now = localtime()
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     pokemon_entities = PokemonEntity.objects.filter(
-            appeared_at__lt=timenow,
-            disappeared_at__gt=timenow
+            appeared_at__lt=now,
+            disappeared_at__gt=now
             )
     for pokemon_entity in pokemon_entities:
             add_pokemon(
@@ -56,10 +56,10 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemons = Pokemon.objects.get(id=pokemon_id)
+    pokemon = Pokemon.objects.get(id=pokemon_id)
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     pokemon_entities = PokemonEntity.objects.filter(
-        pokemon=pokemons,
+        pokemon=pokemon,
         appeared_at__lt=localtime(),
         disappeared_at__gt=localtime()
     )
@@ -67,11 +67,11 @@ def show_pokemon(request, pokemon_id):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.long,
-            request.build_absolute_uri(pokemons.image.url)
+            request.build_absolute_uri(pokemon.image.url)
         )
 
-    if pokemons.previous_evolutions:
-        previous_pokemon = pokemons.previous_evolutions
+    if pokemon.previous_evolutions:
+        previous_pokemon = pokemon.previous_evolutions
         previous_evolution = {
             "title_ru": previous_pokemon,
             "pokemon_id": previous_pokemon.id,
@@ -79,8 +79,8 @@ def show_pokemon(request, pokemon_id):
         }
     else:
         previous_evolution = None
-    if pokemons.next_evolutions.first():
-        next_pokemon = pokemons.next_evolutions.first()
+    if pokemon.next_evolutions.first():
+        next_pokemon = pokemon.next_evolutions.first()
         next_evolution = {
             "title_ru": next_pokemon.title,
             "pokemon_id": next_pokemon.id,
@@ -90,11 +90,11 @@ def show_pokemon(request, pokemon_id):
         next_evolution = None
 
     pokemon = {
-        "title_ru": pokemons,
-        "title_en": pokemons.title_en,
-        "title_jp": pokemons.title_jp,
-        "description": pokemons.description,
-        "img_url": pokemons.image.url,
+        "title_ru": pokemon,
+        "title_en": pokemon.title_en,
+        "title_jp": pokemon.title_jp,
+        "description": pokemon.description,
+        "img_url": pokemon.image.url,
         "previous_evolution": previous_evolution,
         "next_evolution": next_evolution
     }
